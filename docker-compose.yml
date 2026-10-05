@@ -1,0 +1,46 @@
+# Локально и на VPS поднимается одинаково, один раз:
+#
+#   docker network create web
+#   docker compose -f infra/docker-compose.yml up -d
+#
+# Порты управляются из infra/.env: локально 8080/9443, на проде 80/443.
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+      - "${HTTPS_PORT:-9443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USER:-basekit}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-secret}
+      POSTGRES_DB: ${PG_DB:-basekit}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - web
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
+  pgdata:

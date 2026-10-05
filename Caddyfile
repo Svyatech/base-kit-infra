@@ -1,0 +1,16 @@
+(site) {
+    encode gzip
+    reverse_proxy {args[0]}:80
+}
+
+:80 {
+    import site base-kit-app
+}
+
+# На проде сюда добавляются домены, по одному блоку на сайт:
+#
+# vietnam-guide.ru {
+#     import site vietnam-app
+# }
+#
+# Caddy сам выпустит и будет продлевать HTTPS-сертификат.
