@@ -7,6 +7,10 @@
     import site base-kit-app
 }
 
+http://vietnam.guide {
+    import site vietnam-guide-app
+}
+
 # На проде сюда добавляются домены, по одному блоку на сайт:
 #
 # vietnam-guide.ru {
